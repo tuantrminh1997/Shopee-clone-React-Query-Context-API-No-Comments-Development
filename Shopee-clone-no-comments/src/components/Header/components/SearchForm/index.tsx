@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { MagnifyingGlassIcon } from "src/icons";
 import { SearchFormCartPropsType } from "src/types";
 
-// Trước mắt component Header dùng cho MainLayout -> Layout sau khi đăng nhập thành công
 export default function SearchForm({ handleSubmitForm, register, isHeaderForCartLayout }: SearchFormCartPropsType) {
 	const { t } = useTranslation("header");
 	return (
@@ -16,10 +15,6 @@ export default function SearchForm({ handleSubmitForm, register, isHeaderForCart
 					: "basis-[50%]"
 			} xl:flex-1`}
 		>
-			{/* Logo Shopee -> tái sử dụng Component PopoverOption do có cấu trúc giống */}
-			{/* Form Input tìm kiếm */}
-			{/* Thuộc tính action là một trong những thuộc tính quan trọng của thẻ <form>, và nó xác định URL mà dữ liệu biểu mẫu sẽ được gửi đến khi người dùng nhấn nút gửi 
-          (submit) trong biểu mẫu. */}
 			<form className='w-full flex flex-col' onSubmit={handleSubmitForm}>
 				<div
 					className={`w-full bg-white rounded-sm p-1 flex basis-[50%] isHeaderForCartLayout ? "" : "headerInputFormBoxShadow"`}

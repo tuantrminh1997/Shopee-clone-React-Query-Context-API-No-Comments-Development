@@ -14,18 +14,15 @@ export default class ErrorBoundary extends Component<Props, State> {
 	};
 
 	public static getDerivedStateFromError(): State {
-		// Update state so the next render will show the fallback UI.
 		return { hasError: true };
 	}
 
 	public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-		// You can also log the error to an error reporting service
 		console.error("Uncaught error: ", error, errorInfo);
 	}
 
 	public render() {
 		if (this.state.hasError) {
-			// You can render any custom fallback UI
 			return (
 				<main className='flex h-screen w-full flex-col items-center justify-center'>
 					<h1 className='text-9xl font-extrabold tracking-widest text-gray-900'>500</h1>

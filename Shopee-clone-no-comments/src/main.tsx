@@ -40,5 +40,3 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 		</Router>
 	</React.StrictMode>,
 );
-
-// fix bug 06/10/2023 - delete comments

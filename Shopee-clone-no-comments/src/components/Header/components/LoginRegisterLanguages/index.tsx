@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// imports:
-// react - router - dom:
+
 import { Link } from "react-router-dom";
-// types:
-import { LoginRegisterLanguagesPropsType, User } from "src/types";
-// icons:
+
+import { LoginRegisterLanguagesPropsType } from "src/types";
+
 import { ArrowDownIcon, EarthIcon } from "src/icons";
-// constants:
+
 import { paths, headerChangeLanguageOptions } from "src/constants";
-// utils:
+
 import { getUserAvatarUrl } from "src/utils";
-// i18n:
+
 import { useTranslation } from "react-i18next";
 import { locales } from "src/i18n";
-// common components:
+
 import { Popover, PopoverHoverTarget, PopoverOption } from "src/components";
 
 export default function LoginRegisterLanguages({
@@ -21,16 +20,13 @@ export default function LoginRegisterLanguages({
 	userProfile,
 	handleLogout,
 }: LoginRegisterLanguagesPropsType) {
-	// paths:
 	const { purchases: purchasesPathUrl, profile: profilePathUrl } = paths;
-	// react i18n:
+
 	const { i18n } = useTranslation();
 	const { t } = useTranslation("header");
-	// ép kiểu cho biến as string
-	// as string chưa đủ chặt chẽ ta ép cho nó là 1 trong các giá trị của thuộc tính của object locales { vietnamese: "tiếng việt", english: "english", }
+
 	const currentLanguage = locales[i18n.language as keyof typeof locales];
-	// Method quản lý chức năng đa ngôn ngữ:
-	// ép kiểu targetedLanguage là 1 trong các giá trị của thuộc tính của object locales
+
 	const handleChangeLanguage: (targetedLanguage: keyof typeof locales) => void = (
 		languageSelectOption: keyof typeof locales,
 	) => {
@@ -53,23 +49,18 @@ export default function LoginRegisterLanguages({
 
 	return (
 		<div className='flex h-[34px] justify-end lowerMobile:justify-between xl:mr-4 lowerMobile:h-[40%] lowMobile:h-[50%]'>
-			{/* Popover ngôn ngữ */}
 			<Popover
 				hoverTarget={
 					<PopoverHoverTarget
 						leftIcon={<EarthIcon />}
-						// Handle vấn đề Load title ngôn ngữ đã target lên UI
-						// -> sử dụng currentLanguage từ i18n
 						title={<span className='mx-1'>{currentLanguage}</span>}
 						rightIcon={<ArrowDownIcon />}
 						containerClassName='flex xl:h-full xl:text-xl lowMobile:text-lg lowerMobile:text-sm items-center text-[13px] capitalize '
 					/>
 				}
-				// hoverTargetClassName = className của item quản lý popover
 				hoverTargetclassName={
 					"flex items-center text-sm  py-[7px] px-[10px] hover:text-[hsla(0,0%,100%,.7)] cursor-pointer"
 				}
-				// popoverContent = item chứa nội dung Popover
 				popoverContent={
 					<div className='popoverContentLanguagesContainerStyle'>
 						<div className='flex flex-col'>
@@ -92,11 +83,8 @@ export default function LoginRegisterLanguages({
 						</div>
 					</div>
 				}
-				// className styles cho arrow: ta truyền styles phần căn chỉnh vị trí
 				popoverArrowClassName='absolute translate-y-[-80%]'
 			/>
-			{/* Popover Tài Khoản */}
-			{/* Đã đăng nhập */}
 			{isLoggedIn && (
 				<Popover
 					hoverTarget={
@@ -113,10 +101,6 @@ export default function LoginRegisterLanguages({
 							title={
 								<span className='pl-[5px] xl:text-xl'>
 									{userProfile?.name ? userProfile?.name : ((userProfile as any)?.email as string)}
-									{/* {!userProfile?.name &&
-										(((userProfile as any)?.data as any)?.user as User).email &&
-										(((userProfile as any)?.data as any)?.user as User).email}
-									{userProfile?.name && !(((userProfile as any)?.data as any)?.user as User).email && userProfile?.name} */}
 								</span>
 							}
 							containerClassName='flex items-center text-[13px] px-[10px] py-[7px] cursor-pointer'
@@ -147,7 +131,6 @@ export default function LoginRegisterLanguages({
 							</div>
 						</div>
 					}
-					// className styles cho arrow: ta truyền styles phần căn chỉnh vị trí
 					popoverArrowClassName='absolute translate-y-[-80%]'
 				/>
 			)}

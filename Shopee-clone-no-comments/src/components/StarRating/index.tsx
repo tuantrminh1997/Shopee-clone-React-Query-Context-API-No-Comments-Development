@@ -2,20 +2,18 @@
 import { ProductItemDetailStarIcon } from "src/icons";
 import { StarRatingPropsType } from "src/types";
 
-export default function StarRating({ isAtProductDetailPage = false, rating }: StarRatingPropsType) {
+export default function StarRating({ className, isAtProductDetailPage = false, rating }: StarRatingPropsType) {
 	const getStarRatingElementWidth = (index: number) => {
 		if (index <= rating) {
 			return "100%";
 		} else if (index - rating < 1) {
-			// Math.floor = làm tròn xuống, ví dụ 3.4 -> 0.4
-			// để lấy phần thập phân của rating star -> rating - Math.floor(rating)
 			return `${(rating - Math.floor(rating)) * 100}%`;
 		} else {
 			return "0";
 		}
 	};
 	return (
-		<div className='flex'>
+		<div className={`${className} flex`}>
 			{Array(5)
 				.fill(0)
 				.map((_, index) => {

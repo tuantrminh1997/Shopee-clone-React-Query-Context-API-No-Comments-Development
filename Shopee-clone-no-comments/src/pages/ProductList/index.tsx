@@ -62,7 +62,7 @@ export default function ProductList() {
 							totalPage={productListQueryData.data.data.pagination.page_size as number}
 							categoriesData={categoriesQueryData?.data.data as Category[]}
 						/>
-						<div className='grid grid-cols-5 gap-2 xl:grid-cols-4 lg:grid-cols-2 sm:grid-cols-1 mt-2 pb-10 lowMobile:grid-cols-2'>
+						<div className='grid grid-cols-5 gap-2 xl:grid-cols-4 lg:grid-cols-2 sm:grid-cols-2 mt-2 pb-10 lowMobile:grid-cols-1'>
 							{productListQueryData.data.data.products.map((product) => (
 								<ProductItem key={product._id as string} product={product as ProductItemSuccessResponse} />
 							))}
