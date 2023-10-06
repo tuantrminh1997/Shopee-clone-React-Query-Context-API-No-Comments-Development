@@ -1,31 +1,28 @@
-// libraries
-// react hooks:
-import { useContext } from "react";
-// Sử dụng {Helmet} từ react helmet async thay vì { Helmet } từ react-helmet -> handle vấn đề báo lỗi ở console Using UNSAFE_componentWillMount ...v...v.....
+import { useContext, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
-// yup:
+
 import { yupResolver } from "@hookform/resolvers/yup";
-// react hook form:
+
 import { useForm } from "react-hook-form";
-// react-router-dom
-import { Link, useNavigate } from "react-router-dom";
-// react query:
+
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { useMutation } from "@tanstack/react-query";
-// i18n
+
 import { useTranslation } from "react-i18next";
-// types:
+
 import { FormRulesLogin, FormRulesSchema, ErrorResponseApi, User } from "src/types";
-// form rules:
+
 import { isAxiosUnprocessableEntityError, formRulesLoginSchema } from "src/utils";
-// apis:
+
 import { loginApi } from "src/apis";
-// common components:
+
 import { Input, Button } from "src/components";
-// App Context:
+
 import { AppContext } from "src/contexts/app";
+import { paths } from "src/constants";
 
 export default function Login() {
-	// App Context:
 	const { setIsLoggedIn, setUserProfile } = useContext(AppContext);
 	const navigate = useNavigate();
 
@@ -34,41 +31,28 @@ export default function Login() {
 		handleSubmit,
 		setError,
 		formState: { errors },
-		// Cấu trúc object của form login được tạo từ Schema, cấu trúc tương tự object của form login Register
-		// nhưng omit đi thuộc tính confirm_password
 	} = useForm<FormRulesLogin>({
 		resolver: yupResolver<FormRulesLogin>(formRulesLoginSchema),
 	});
 
-	// React Query + Apis: Quản lý chức năng call API
-	// Mutation quản lý chức năng Register
 	const { mutate: loginMutate, isLoading: loginMutateLoadingStatus } = useMutation({
-		// loginAPI được gọi và thực hiện tác vụ call API -> interceptor của request được chạy
 		mutationFn: (body: Omit<FormRulesSchema, "confirm_password">) => loginApi(body),
 	});
 
-	// Method quản lý chức năng submit form
-	// handleSubmit: (onValid: SubmitHandler<FormData>, onInvalid?: SubmitErrorHandler<FormData> | undefined)
 	const onsubmit = handleSubmit((loginData) => {
 		loginMutate(loginData, {
 			onSuccess: (data) => {
-				// Sau khi login thành công và nhận được response từ server
-				// -> cập nhật trạng thái của biến isLoggedIn trong Context
-				// Chú ý: trong hook quản lý Route useRouteElements, cần cập nhật lại giá trị của biến isLoggedIn từ Context
 				setIsLoggedIn(true);
-				// lưu thông tin user vào biến userProfile trong Context API -> triển khai tương tự bên page Register
+
 				setUserProfile(data?.data?.data?.user as User);
-				// và navigate sang trang danh sách sản phẩm: Route "/"
+
 				navigate("/");
 			},
 			onError: (error) => {
 				if (isAxiosUnprocessableEntityError<ErrorResponseApi<Omit<FormRulesSchema, "confirm_password">>>(error)) {
-					// Bắt lỗi 422 bằng typePredicate
-					const formError = error.response?.data.data; // form = {email: string, password: string}
+					const formError = error.response?.data.data;
 					if (formError) {
 						Object.keys(formError).forEach((property) => {
-							//  setError được sử dụng để lưu thông tin lỗi vào biến errors trong formState. Khi bạn gọi setError, React Hook Form sẽ cập
-							// nhật biến errors với thông tin lỗi mới, từ đó bạn có thể hiển thị lỗi lên giao diện người dùng.
 							setError(property as keyof Omit<FormRulesSchema, "confirm_password">, {
 								message: formError[property as keyof Omit<FormRulesSchema, "confirm_password">],
 								type: "ServerResponse",
@@ -80,6 +64,15 @@ export default function Login() {
 		});
 	});
 	const { t } = useTranslation("loginRegister");
+	const { login: loginPath } = paths;
+	const pathname = useLocation().pathname;
+	const { changePassword } = paths;
+
+	const [openEyeIconMode, setOpenEyeIconMode] = useState<boolean>(false);
+	const handleToggleShowPassword: (openEyeIconMode: boolean) => void = (openEyeIconMode: boolean) => {
+		setOpenEyeIconMode(openEyeIconMode);
+	};
+	const inputType = useMemo(() => (openEyeIconMode ? "text" : "password"), [openEyeIconMode]);
 
 	return (
 		<div className='bg-orange'>
@@ -119,8 +112,6 @@ export default function Login() {
 								type='email'
 								placeholder={t("login.email")}
 								register={register}
-								// Do ta đặt type register?: UseFormRegister<any> nên ở đây không nhận được gợi ý từ
-								// react hook form -> xem chi tiết tại file markdown: Phân tích generic type cho component input ...
 								errorMessage={errors.email?.message}
 							/>
 							<Input<FormRulesLogin>
@@ -130,13 +121,13 @@ export default function Login() {
 								classNameInput={
 									"p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm"
 								}
-								type='password'
 								autoComplete='on'
 								placeholder={t("login.password")}
 								register={register}
-								// Do ta đặt type register?: UseFormRegister<any> nên ở đây không nhận được gợi ý từ
-								// react hook form -> xem chi tiết tại file markdown: Phân tích generic type cho component input ...
 								errorMessage={errors.password?.message}
+								handleToggleShowPassword={handleToggleShowPassword as (openEyeIconMode: boolean) => void}
+								type={(pathname === loginPath ? inputType : "password") as string}
+								pathname={changePassword}
 							/>
 							<div className='mt-3'>
 								{/* 
@@ -145,7 +136,6 @@ export default function Login() {
 								<Button
 									type='submit'
 									className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600 flex items-center justify-center'
-									// prop isLoading, disabled được truyền khi mutation đang loading và đợi server trả response về.
 									isLoading={loginMutateLoadingStatus}
 									disabled={loginMutateLoadingStatus}
 								>

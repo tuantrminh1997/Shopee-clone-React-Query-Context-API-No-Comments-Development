@@ -56,7 +56,6 @@ export default memo(function SubmitFormButton({
 						isDisableSubmitFormButton ? "bg-[#facac0]" : "bg-[#ee4d2d] hover:bg-[#f05d40]"
 					} xl:m-auto capitalize`}
 					childrenClassName={"m-auto"}
-					// Disable khi call API fetching APIupdate Avatar, update Profile, get Profile
 					disabled={isDisableSubmitFormButton}
 				>
 					{submitFormButtonTitle}

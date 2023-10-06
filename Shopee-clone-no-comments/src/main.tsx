@@ -19,15 +19,11 @@ const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			refetchOnWindowFocus: false,
-			// query cho toàn bộ ứng dụng, số lần retry khi fetch API bị lỗi:
-			// - giả sử cố tình sửa access_token thành sai -> thực hiện tác vụ call API (get Product Item List chẳng hạn) -> lỗi và react query
-			// tự động retry theo số lần cấu hình ở đây.
 			retry: 0,
 		},
 	},
 });
 
-// Chú ý: HelmetProvider để sử dụng { Helmet } from "react-helmet-async", bọc App và ngay bên dưới React Router
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<Router>
@@ -45,4 +41,4 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 	</React.StrictMode>,
 );
 
-// 04/10/2023 - 7:25AM
+// fix bug 06/10/2023 - delete comments

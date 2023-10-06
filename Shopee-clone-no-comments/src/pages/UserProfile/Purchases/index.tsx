@@ -1,81 +1,61 @@
-// assets
 import purchaseListEmtyImgage from "src/assets/purchase-list-empty-background.png";
-// react router dom
+
 import { createSearchParams } from "react-router-dom";
-// Sử dụng {Helmet} từ react helmet async thay vì { Helmet } từ react-helmet -> handle vấn đề báo lỗi ở console Using UNSAFE_componentWillMount ...v...v.....
+
 import { Helmet } from "react-helmet-async";
-// i18n
+
 import { useTranslation } from "react-i18next";
-// axios:
+
 import { AxiosResponse } from "axios";
-// react hooks:
+
 import { useMemo, useContext } from "react";
-// tanstack query:
+
 import { useQuery } from "@tanstack/react-query";
-// constants
+
 import { purchaseStatus, paths } from "src/constants";
-// hooks:
+
 import { useQueryParams } from "src/hooks";
-// context API:
+
 import { AppContext } from "src/contexts/app";
-// types:
+
 import {
 	SuccessResponseApi,
 	PurchaseSuccessResponse,
 	PurchaseListStatus,
 	ExtendPurchaseSuccessResponse,
 } from "src/types";
-// apis:
+
 import { getPurchaseListApi } from "src/apis";
-// common components:
+
 import { Button, PurchaseItem } from "src/components";
 
 export default function Purchases() {
-	// React Context -> App Context
-	// isLoggedIn = Context API quản lý trạng thái đăng nhập: có accessToken lưu trong LocalStorage hay không ?
-	// userProfile được lấy từ Local Storage (lưu vào Local Storage nhờ Interceptor - Axios)
 	const { isLoggedIn } = useContext(AppContext);
-	// constants:
+
 	const { allPurschases } = purchaseStatus;
 	const { purchases } = paths;
 
-	// object queryParams: chứa loạt tham số query params và giá trị của nó lấy được từ url (truyền lên bằng thẻ Link và prop to, hoặc sử dụng navigate = useNavigate())
 	const queryParams = useQueryParams();
 	const purchaseListStatus = queryParams.status || allPurschases;
 
-	// Query quản lý tác vụ callAPI get purchase List -> nhận dữ liệu Các sản phẩm đang có trong cart -> truyền vào Component Cart -> đổ ra UI
-	// -> Query không bị gọi lại khi chuyển Page có cùng layout là MainLayout, do MainLayout khi đó chỉ bị re-render
-	// -> query này không bị inactive (query bị inactive khi component chứa nó bị unmunted hàon toàn -> khi đó query bắt đầu bị tính thời gian kể từ khi bị xoá)
-	// -> không cần thiết phải set staleTime là infinity (vô hạn)
-	// Chú ý: Khi component chứa query bị unmounted, thì React Query sẽ ngừng tính thời gian "stale" cho query đó. Nghĩa là nếu bạn mounted lại component và query đó được gọi lại, thời
-	// gian "stale" sẽ tính lại từ đầu, không tính tiếp từ thời điểm trước đó khi component bị unmounted.
 	const { data: purchaseListQueryData } = useQuery({
 		queryKey: ["purchaseList", { purchaseListStatus }],
-		// Chú ý: sẽ phát sinh vấn đề khi thêm 1 sản phẩm vào giỏ hàng -> dữ liệu thêm mới trong giỏ hàng chưa được cập nhật và đổ ra UI
-		// -> nguyên nhân: do khi kích hoạt sự kiện onClick -> thêm vào giỏ hàng -> call API -> cập nhật mới dữ liệu giỏ hàng trên Server và success
+
 		queryFn: () => getPurchaseListApi({ status: purchaseListStatus as PurchaseListStatus }),
 		keepPreviousData: true,
-		// Sau khi logout và reload lại page -> component header được mounted lại và gọi API getPurchaseListApi, tuy nhiên do đã logout và không còn token trong localStorage
-		// -> cuộc gọi API bị lỗi
-		// -> fix các vấn đề:
-		// 1. sau khi đã logout thì không còn sản phẩm nào trong giỏ hàng.
-		// 2. đồng thời không call API getPurchaseListApi -> handle bằng cách sử dụng context isLoggedIn -> enabled khi isLoggedIn = truthy
+
 		enabled: isLoggedIn,
 	});
 
-	// biến đại diện cho toàn bộ Purchase List (get from server)
 	const purchaseList = useMemo(
 		() =>
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(purchaseListQueryData as AxiosResponse<SuccessResponseApi<PurchaseSuccessResponse[]>, any> | undefined)?.data
 				.data,
 		[purchaseListQueryData],
 	);
 
-	// Biến quản lý trạng thái số lượng trong Purchase List:
 	const hasPurchaseItems: boolean | undefined = useMemo(
 		() => purchaseList && purchaseList.length > 0,
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[purchaseList?.length as number],
 	);
 
@@ -103,9 +83,6 @@ export default function Purchases() {
 					return (
 						<Button
 							key={status}
-							// purchases = /user/purchases
-							// create Search Params -> nối thêm params status=[status quy định trạng thái các đơn hàng (được server nhận diện và xử lý)]
-							// -> sử dụng hook useQueryConfig lấy các giá trị params trên url và gói vào object queryConfig -> gọi lên API và get List
 							to={{
 								pathname: purchases,
 								search: createSearchParams({ status: String(status) }).toString(),
@@ -135,13 +112,10 @@ export default function Purchases() {
 						{purchaseList?.map((purchaseItem, purchaseItemIndex) => {
 							const purchaseItemBuyCount = purchaseList?.find((_, index) => index === purchaseItemIndex)?.buy_count;
 							return (
-								// Sử dụng extendPurchaseItemIndex hoặc extendPurchaseItem._id làm key
 								<PurchaseItem
-									key={purchaseItemIndex} // Hoặc key={extendPurchaseItem._id}
-									// purchaseItem={purchaseItem}
+									key={purchaseItemIndex}
 									extendPurchaseItem={purchaseItem as ExtendPurchaseSuccessResponse}
 									extendPurchaseItemIndex={purchaseItemIndex}
-									// sử dụng purchaseItemBuyCount  === purchaseItem.buy_count để so sánh với giá trị quantity nhập tay và xuất ra từ
 									purchaseItemBuyCount={purchaseItemBuyCount as number}
 								/>
 							);

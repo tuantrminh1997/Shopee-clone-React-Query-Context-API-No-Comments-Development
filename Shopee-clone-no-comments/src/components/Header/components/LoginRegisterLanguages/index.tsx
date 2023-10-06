@@ -49,6 +49,7 @@ export default function LoginRegisterLanguages({
 			title: t("header.login"),
 		},
 	] as const;
+	console.log("userProfile at LoginRegisterLanguages: ", userProfile);
 
 	return (
 		<div className='flex h-[34px] justify-end lowerMobile:justify-between xl:mr-4 lowerMobile:h-[40%] lowMobile:h-[50%]'>
@@ -111,7 +112,11 @@ export default function LoginRegisterLanguages({
 							}
 							title={
 								<span className='pl-[5px] xl:text-xl'>
-									{userProfile?.name ? userProfile?.name : (((userProfile as any)?.data as any)?.user as User).name}
+									{userProfile?.name ? userProfile?.name : ((userProfile as any)?.email as string)}
+									{/* {!userProfile?.name &&
+										(((userProfile as any)?.data as any)?.user as User).email &&
+										(((userProfile as any)?.data as any)?.user as User).email}
+									{userProfile?.name && !(((userProfile as any)?.data as any)?.user as User).email && userProfile?.name} */}
 								</span>
 							}
 							containerClassName='flex items-center text-[13px] px-[10px] py-[7px] cursor-pointer'

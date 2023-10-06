@@ -34,7 +34,7 @@ export default function Input<TFieldValues extends FieldValues = FieldValues>({
 		register && formPropertyName ? register(formPropertyName as FieldPath<TFieldValues>, formPropertyRules) : null;
 
 	// constants:
-	const { changePassword } = paths;
+	const { changePassword, register: registerPath, login: loginPath } = paths;
 	// Handle vấn đề: nếu như truyền classNameContainer -> đi vào object containerProps
 	// Nếu như ContainerElement được truyền thành Fragment -> xoá các Key trong Object containerProps và ContainerElement không có Props gì -> tránh báo lỗi console.log
 	const containerProps: ContainerPropsType = {};

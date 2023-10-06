@@ -28,13 +28,4 @@ const formRulesSchema = yup.object({
 	// rule cho confirm_password
 	confirm_password: handleConfirmPasswordSchema("password"),
 });
-// -> truyền formRulesSchema thành type FormRulesSchema có dạng:
-// type FormRulesSchema = {
-//   email: string;
-//   password: string;
-//   confirm_password: string;
-// }
-// -> sử dụng type FormRulesSchema tại page Login, định nghĩa type cho biến body
-// của mutation login và register (register Omit đi thuộc tính confirm_password)
-
 export default formRulesSchema;

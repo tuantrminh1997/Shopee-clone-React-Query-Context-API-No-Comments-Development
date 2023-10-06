@@ -138,7 +138,6 @@ export default function Header({ isHeaderForCartLayout = false }: HeaderPropsTyp
 		enabled: isLoggedIn,
 	});
 	const purchaseList = useMemo(() => purchaseListQueryData?.data.data, [purchaseListQueryData]);
-
 	return (
 		<div
 			className={`text-white w-full flex h-[119px] ${
