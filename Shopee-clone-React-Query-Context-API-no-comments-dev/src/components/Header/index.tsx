@@ -27,6 +27,7 @@ import { productListSearchSchema } from "src/utils";
 import { paths, purchaseStatus } from "src/constants";
 // private components:
 import { LoginRegisterLanguages, SearchForm, ShopeeHeaderLogo, Cart } from "./components";
+import { toast } from "react-toastify";
 
 // Trước mắt component Header dùng cho MainLayout -> Layout sau khi đăng nhập thành công
 export default function Header({ isHeaderForCartLayout = false }: HeaderPropsType) {
@@ -59,10 +60,15 @@ export default function Header({ isHeaderForCartLayout = false }: HeaderPropsTyp
 		// khi logout -> gọi hàm loutout
 		mutationFn: () => logoutApi(),
 		// logout thành công -> set lại biến isLoggedIn
-		onSuccess: () => {
+		onSuccess: (logoutSuccessData) => {
 			setIsLoggedIn(false);
 			setUserProfile(null);
 			queryClient.removeQueries({ queryKey: ["purchaseList", { status: inCart }] });
+			const successMessage = logoutSuccessData.data.message;
+			toast.success(successMessage, {
+				position: "top-center",
+				autoClose: 2000,
+			});
 		},
 	});
 
@@ -99,7 +105,6 @@ export default function Header({ isHeaderForCartLayout = false }: HeaderPropsTyp
 		queryFn: () => getPurchaseListApi({ status: inCart }),
 		enabled: isLoggedIn,
 	});
-	console.log("purchaseListQueryData after login: ", purchaseListQueryData);
 	const purchaseList = useMemo(() => purchaseListQueryData?.data.data, [purchaseListQueryData]);
 
 	return (

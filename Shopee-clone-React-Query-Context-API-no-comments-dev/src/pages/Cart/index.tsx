@@ -64,7 +64,6 @@ export default function Cart() {
 				.data,
 		[purchaseListQueryData],
 	);
-	console.log("purchase List get từ server: ", purchaseList);
 
 	// biến đại diện cho toàn bộ Purchase Item đang được check (tối ưu = useMemo do đây là biến)
 	const checkedPurchaseItems = useMemo(
@@ -101,7 +100,6 @@ export default function Cart() {
 			);
 		});
 	}, [purchaseList, purchaseProductItemDetailIdFromLocation, setExtendPurchaseList]);
-	console.log("extend purchase List get từ context API: ", extendPurchaseList);
 
 	useEffect(() => {
 		return () => {

@@ -8,7 +8,6 @@ import { RegisterLayoutPropsType } from "src/types";
 import { Footer, Header } from "src/components";
 
 function MainLayoutInner({ children }: RegisterLayoutPropsType) {
-	console.log("MainLayout re-render");
 	return (
 		<div>
 			<Header />

@@ -109,7 +109,6 @@ class Http {
 				if (isNotUnprocessableEntityError(errorResponse) && !isAxiosUnauthorizedError(errorResponse)) {
 					const errorData: any | undefined | null = (errorResponse as AxiosError<unknown, any>).response?.data;
 					const errorMessage = errorData?.message || (errorResponse as AxiosError<unknown, any>).message;
-					console.log("errorData in interceptor", errorMessage);
 					toast.error(errorMessage);
 				}
 				if (isAxiosUnauthorizedError<ErrorResponseApi<{ name: string; message: string }>>(errorResponse)) {

@@ -47,6 +47,7 @@ export default function ProductItemDetail() {
 	const queryClient = useQueryClient();
 	// constants:
 	const { inCart } = purchaseStatus;
+
 	// Mutation quản lý các chức năng về giỏ hàng: addToCartApi -> method Post -> create
 	const { mutate: addToCartMutate, mutateAsync: addToCartMutateAsync } = useMutation({
 		mutationFn: (body: ProductItemApiType) => addToCartApi(body),

@@ -61,7 +61,6 @@ export default function Login() {
 				});
 			},
 			onError: (error) => {
-				console.log("lỗi 422 do đăng nhập sai: ", error);
 				if (isAxiosUnprocessableEntityError<ErrorResponseApi<Omit<FormRulesSchema, "confirm_password">>>(error)) {
 					const formError = error.response?.data.data; // form = {email: string, password: string}
 					if (formError) {
