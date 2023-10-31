@@ -132,6 +132,23 @@ export default function Profile() {
 		};
 	}, [userProfileData]);
 
+	const [availableForm, setAvailableForm] = useState<Omit<User, "createdAt" | "roles" | "updatedAt" | "_id"> | null>(
+		null,
+	);
+
+	useEffect(() => {
+		if (userProfileData?.name || userProfileData?.address || userProfileData?.avatar || userProfileData?.phone) {
+			const availableForm = {
+				address: userProfileData?.address,
+				avatar: undefined,
+				date_of_birth: userProfileData?.date_of_birth,
+				name: userProfileData?.name,
+				phone: userProfileData?.phone,
+			};
+			setAvailableForm(availableForm as Omit<User, "createdAt" | "roles" | "updatedAt" | "_id">);
+		}
+	}, [userProfileData]);
+
 	const userProfileFormDataRef = useRef<UpdateUserProfileBodyType | ChangeUserPasswordBodyType>(initialUserProfileRef);
 
 	const onSubmit = handleSubmit(async (formDataSuccessSchemaRules) => {
@@ -159,6 +176,14 @@ export default function Profile() {
 			date_of_birth: formDataSuccessSchemaRules?.date_of_birth?.toISOString(),
 			avatar: userAvatarTryBlockScope,
 		};
+		if (availableForm && isEqual(availableForm, userProfileFormData)) {
+			// hàm isEqual từ lodash -> so sánh cấu trúc của 2 object bất kể cùng hay khác về tham chiếu
+			toast.error("Thông tin trong form chưa được thay đổi, hãy thay đổi trước khi nhấn Lưu để đồng bộ với server", {
+				position: "top-right",
+				autoClose: 3000,
+			});
+			return;
+		}
 		if (isEqual(userProfileFormData, userProfileFormDataRef.current)) {
 			toast.error("Thông tin trong form chưa được thay đổi, hãy thay đổi trước khi nhấn Lưu để đồng bộ với server", {
 				position: "top-right",
