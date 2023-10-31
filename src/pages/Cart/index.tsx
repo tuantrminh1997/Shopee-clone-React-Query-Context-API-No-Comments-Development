@@ -146,15 +146,21 @@ export default function Cart() {
 	});
 
 	const handleBuyCheckedPurchaseItems: () => void = () => {
-		if (checkedPurchaseItemsCount > 0) {
-			const checkedPurchaseItemsToServer: BuyProductsApiPropsType<ProductItemApiType> = checkedPurchaseItems.map(
-				(checkedPurchaseItem) => ({
-					product_id: checkedPurchaseItem.product._id,
-					buy_count: checkedPurchaseItem.buy_count,
-				}),
-			);
-			buyCheckedPurchaseItemsMutation(checkedPurchaseItemsToServer);
+		if (checkedPurchaseItemsCount < 1) {
+			toast.error("Vui lòng tích chọn các sản phẩm bạn muốn thanh toán", {
+				position: "top-right",
+				autoClose: 2000,
+			});
+			return;
 		}
+		const checkedPurchaseItemsToServer: BuyProductsApiPropsType<ProductItemApiType> = checkedPurchaseItems.map(
+			(checkedPurchaseItem) => ({
+				// product_id: checkedPurchaseItem._id -> lỗi -> đọc lại hệ thống để tìm hiểu nguyên nhân
+				product_id: checkedPurchaseItem.product._id,
+				buy_count: checkedPurchaseItem.buy_count,
+			}),
+		);
+		buyCheckedPurchaseItemsMutation(checkedPurchaseItemsToServer);
 	};
 
 	const { mutate: deletePurchaseItemMutation } = useMutation({
@@ -212,6 +218,13 @@ export default function Cart() {
 
 	const handleDeletePurchaseItems: () => void = () => {
 		const purchaseItemIds = checkedPurchaseItems.map((checkedPurchaseItem) => checkedPurchaseItem._id);
+		if (purchaseItemIds.length < 1) {
+			toast.error("Vui lòng tích chọn các sản phẩm bạn muốn xoá", {
+				position: "top-right",
+				autoClose: 2000,
+			});
+			return;
+		}
 		deletePurchaseItemMutation(purchaseItemIds);
 	};
 
